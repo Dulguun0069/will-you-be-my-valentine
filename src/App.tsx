@@ -1,10 +1,24 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import "./App.css";
+
+const HEART_COUNT = 25;
 
 export default function Page() {
   const [noCount, setNoCount] = useState(0);
   const [yesPressed, setYesPressed] = useState(false);
   const yesButtonSize = noCount * 20 + 16;
+
+  const hearts = useMemo(() => {
+    if (!yesPressed) return [];
+    return Array.from({ length: HEART_COUNT }, (_, i) => ({
+      id: i,
+      left: Math.random() * 100,
+      size: 12 + Math.random() * 28,
+      delay: Math.random() * 3,
+      duration: 3 + Math.random() * 3,
+    }));
+  }, [yesPressed]);
 
   const handleNoClick = () => {
     setNoCount(noCount + 1);
@@ -32,6 +46,28 @@ export default function Page() {
     <div className="-mt-16 flex h-screen flex-col items-center justify-center">
       {yesPressed ? (
         <>
+          {hearts.length > 0 && (
+            <div
+              className="falling-hearts"
+              style={{ pointerEvents: "none" }}
+              aria-hidden
+            >
+              {hearts.map((heart) => (
+                <span
+                  key={heart.id}
+                  className="falling-heart"
+                  style={{
+                    left: `${heart.left}%`,
+                    fontSize: `${heart.size}px`,
+                    animationDelay: `${heart.delay}s`,
+                    animationDuration: `${heart.duration}s`,
+                  }}
+                >
+                  ❤️
+                </span>
+              ))}
+            </div>
+          )}
           <img src="https://media.tenor.com/gUiu1zyxfzYAAAAi/bear-kiss-bear-kisses.gif" />
           <div className="my-4 text-4xl font-bold"> Хайртай шүү чамдаа үнсье   ;))</div>
         </>
